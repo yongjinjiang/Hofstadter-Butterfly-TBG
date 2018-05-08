@@ -14,6 +14,7 @@ import scipy.sparse.linalg as sla
 from numpy import linalg as LA
 import numpy as np
 import matlab.engine
+from neighbours_TBG import *
 
 # For plotting
 from matplotlib import pyplot as plt
@@ -29,6 +30,7 @@ delta=delta_12;   #nm: inplane decay length
 
 #lattice of the supercells
 (m1,m2)=(3,2);
+#(m1,m2)=(1,2);
 
 # Define the graphene lattice
 sin_30, cos_30 = (1 / 2, sqrt(3) / 2)
@@ -88,7 +90,7 @@ supercell=kwant.lattice.general([L1, L2],[A_position])
 
 c=supercell.sublattices[0]
 
-eta=10**-12;
+eta=0.33*10**-9;
 s1x=(np.sqrt(3)*m1+2*np.sqrt(3)*m2)/(3*(m1**2 + m1* m2 + m2**2));
 s1y=(- 3*m1)/(3*(m1**2 + m1* m2 + m2**2));
 s2x=(np.sqrt(3)*m1- np.sqrt(3)* m2)/(3* (m1**2 + m1*m2 + m2**2));
@@ -108,6 +110,7 @@ def make_system_step1(q=3):
     print(a2p)
     print(L1)
     print(L2)
+    
     print(A_Prime_position)
     print(B_Prime_position)
     #sys.exit()
@@ -130,10 +133,10 @@ def make_system_step1(q=3):
 
     syst = kwant.Builder()
     #eta=10**-12;
-    sc1L=0-eta;sc1R=1-eta; #boundaries along L1 direction
-    sc2L=0-eta;sc2R=q-eta; #boundaries along L2 direction
-    SC1=(sc1R+eta)*tinyarray.array(L1);
-    SC2=(sc2R+eta)*tinyarray.array(L2);  #the magnetic unite cell
+    sc1L=0+eta;sc1R=1+eta; #boundaries along L1 direction
+    sc2L=0+eta;sc2R=q+eta; #boundaries along L2 direction
+    SC1=(sc1R-eta)*tinyarray.array(L1);
+    SC2=(sc2R-eta)*tinyarray.array(L2);  #the magnetic unite cell
  
     start=datetime.now()
     
@@ -173,14 +176,95 @@ def make_system_step1(q=3):
            #if ((sc1L<=(sqrt(3)*m1*xR+2*sqrt(3)*m2*xR - 3*m1*yR)/(3*(m1**2 + m1* m2 + m2**2))<sc1R)&(sc2L<=(sqrt(3)*m1*xR - sqrt(3)* m2*xR + 3* m1* yR +3* m2* yR)/(3* (m1**2 + m1*m2 + m2**2))<sc2R)):
            #    syst[c(n1,n2)]=0
 
-    print('onsite construction finish:')
-    start=datetime.now()
-   # print (datetime.now()-start)
+
+
+ 
+    def family_colors(site):
+        if site.family == a:
+           ss=3
+        elif site.family == b:
+           ss=2
+        elif site.family == a1:
+           ss=1
+        else:
+           ss=0
+        return 1 if site.family == a else 0
+
+    def hopping_colors(site1,site2):
+         return 1 if site1.tag-site2.tag==hoppings[1][0] else 0
+    
+
+    #Plot the closed system without leads.
+   # kwant.plot(syst, site_color=family_colors, site_lw=0.1, hop_color=hopping_colors,colorbar=False)
+    #sys.exit()
+
+
+
+       # print (datetime.now()-start)
 
     syst0=syst.finalized()
     N_ToT=syst0.graph.num_nodes;
     print(N_ToT);
     
+#    for i in range(N_ToT):
+#       print(syst0.sites[i].tag,syst0.sites[i].family)
+
+        
+    xm,ym,zm=SC1/2+SC2/2;
+    #n1,n2=(np.array([[1/sqrt(3),-1],[1/sqrt(3),1]])@np.array([xm,ym])).astype(int)
+    n1,n2=((np.array((np.matrix([Base_a1[:2],Base_a2[:2]]).T).I))@np.array([xm,ym])).astype(int)
+    n1p,n2p=((np.array((np.matrix([a1p[:2],a2p[:2]]).T).I))@np.array([xm,ym])).astype(int)
+    #print(a(n1,n2).pos)
+    print('#######################')
+    nns_a,nns_b,nns_a1,nns_b1,tag2id,n1i,n1f,n2i,n2f,nns=neighbours(syst0,SC1,SC2,sc1L,sc1R,sc2L,sc2R,Base_a1,Base_a2,a1p,a2p,N_ToT,a,b,a1,b1,f1,f2,delta_a,s1x,s1y,s2x,s2y,m1,m2)
+   
+    for i in range(len(nns_a)):
+      print(nns_a[i])
+    
+#    print('n1i,n1f,n2i,n2f',n1i,n1f,n2i,n2f)
+#    for n1 in range(n1i,n1f+1):
+#          for n2 in range(n2i,n2f+1):
+#              if tag2id[n1-n1i,n2-n2i,0]!=(-100):
+#                print(n1,n2,tag2id[n1-n1i,n2-n2i,0])
+#    for n1 in range(n1i,n1f+1):
+#          for n2 in range(n2i,n2f+1):
+#              if tag2id[n1-n1i,n2-n2i,1]!=(-100):
+#                print(n1,n2,tag2id[n1-n1i,n2-n2i,1])
+#    for n1 in range(n1i,n1f+1):
+#          for n2 in range(n2i,n2f+1):
+#              if tag2id[n1-n1i,n2-n2i,2]!=(-100):
+#                print(n1,n2,tag2id[n1-n1i,n2-n2i,2])
+#
+#    for n1 in range(n1i,n1f+1):
+#          for n2 in range(n2i,n2f+1):
+#              if tag2id[n1-n1i,n2-n2i,3]!=(-100):
+#                print(n1,n2,tag2id[n1-n1i,n2-n2i,3])
+#    
+    print(len(nns_a),len(nns_b),len(nns_a1),len(nns_b1))
+    print('nearest neighbour list: done!')
+  
+#    print(b(n1,n2).pos)
+#    print(xm,ym)
+#    print(a(n1+1,n2+1).pos)
+#    print(SC1+SC2)
+#    
+#    print('the second layer:')
+#   
+#    print(a1(n1p,n2p).pos)
+#    print(b1(n1p,n2p).pos)
+#    print(xm,ym)
+#    print(a1(n1p+1,n2p+1).pos)
+#    print(SC1+SC2)
+
+
+    sys.exit()
+#    for i in range(N_ToT):
+#       
+#       print(i,syst0.sites[i])
+#    
+#    sys.exit()
+
+
     
     def neighbors():
         nns=[[] for i in range(N_ToT)];
@@ -200,7 +284,7 @@ def make_system_step1(q=3):
                      if not((n1==0)&(n2==0)&(nj==ni)):
                         nns[ni].append((nj,n1,n2))
         return nns
-    nns=neighbors();
+    #nns=neighbors();
     return nns,syst,syst0,SC1,SC2
     
     
@@ -559,6 +643,7 @@ def make_system_step2(p,k1,k2,syst,syst0,nns,SC1,SC2,q):
 def main():
     start=datetime.now()
     q=17; #if no manetic field, set q=1;
+    
     print(alpha/pi*180)
     #syst, hoppings = make_system(q)
     nns,syst1,syst0,SC1,SC2 = make_system_step1(q)
