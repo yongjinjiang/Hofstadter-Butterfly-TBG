@@ -1,4 +1,1 @@
-Git is a distributed  version control system.
-Git is a free distributed software under the GPL
-now change email
-now change the email2 
+The superconductivity found in twisted bilayer graphene is the Physics World 2018 Breakthrough of the Year. In this project, we solve the Landau levels for the tight-binding model for monolayer and twisted Bilyer Graphene. 
