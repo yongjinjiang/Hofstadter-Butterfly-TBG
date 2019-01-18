@@ -1,1 +1,0 @@
-The superconductivity found in twisted bilayer graphene is the Physics World 2018 Breakthrough of the Year. In this project, we solve the Landau levels for the tight-binding model for monolayer and twisted Bilyer Graphene. 
