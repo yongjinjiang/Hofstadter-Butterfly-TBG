@@ -1,7 +1,6 @@
 # About
-  - Hofstadter-Butterfly-TBG 
   - The superconductivity found in twisted bilayer graphene is the Physics World 2018 [Breakthrough](https://physicsworld.com/a/discovery-of-magic-angle-graphene-that-behaves-like-a-high-temperature-superconductor-is-physics-world-2018-breakthrough-of-the-year/) of the Year. 
-  - In this project, we solve the Landau levels for the tight-binding model for monolayer and twisted Bilyer Graphene and reproduce the results of PhysRevB.88.125426(2013).
+  - In this project, we solve the Landau levels for the tight-binding model(Hofstadter-Butterfly-TBG) for monolayer and twisted Bilyer Graphene and reproduce the results of PhysRevB.88.125426(2013).
 
 ## Basic Usage:
 #### 0. Install [kwant](https://kwant-project.org/) package before run any of the following:  
