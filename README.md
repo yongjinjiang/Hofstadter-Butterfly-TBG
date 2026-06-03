@@ -2,6 +2,16 @@
   - The superconductivity found in twisted bilayer graphene is the Physics World 2018 [Breakthrough](https://physicsworld.com/a/discovery-of-magic-angle-graphene-that-behaves-like-a-high-temperature-superconductor-is-physics-world-2018-breakthrough-of-the-year/) of the Year. 
   - In this project, we solve the Landau levels for the tight-binding model(Hofstadter-Butterfly-TBG) for monolayer and twisted Bilyer Graphene and reproduce the results of PhysRevB.88.125426(2013).
 
+## Installation
+#### 0. Install the Python dependencies:
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install setuptools wheel cython
+pip install --no-build-isolation kwant
+```
+
 ## Basic Usage:
 #### 0. Install [kwant](https://kwant-project.org/) package before run any of the following:  
 #### 1. Use TBG_plot.ipynb file to Visualize the lattice structure. Choose the geometrical parameters(m1,m2) for the Twisted Bilayer(ref: PhysRevB.88.125426(2013)).
